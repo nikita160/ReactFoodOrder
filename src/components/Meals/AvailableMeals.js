@@ -36,25 +36,25 @@ const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const fetchMeals = useCallback(async function _() {
-    const response = await fetch(url);
-    if (!response.ok) setIsLoaded(false);
-    else {
-      const dataset = await response.json();
-
-      const loadedMeals = [];
-
-      for (const key in dataset) {
-        loadedMeals.push(dataset[key]);
-      }
-      setMeals(loadedMeals);
-      setIsLoaded(true);
-    }
-  }, []);
-
   useEffect(() => {
+    const fetchMeals = async () => {
+      const response = await fetch(url);
+      if (!response.ok) setIsLoaded(false);
+      else {
+        const dataset = await response.json();
+
+        const loadedMeals = [];
+
+        for (const key in dataset) {
+          loadedMeals.push(dataset[key]);
+        }
+        setMeals(loadedMeals);
+        setIsLoaded(true);
+      }
+    };
+
     fetchMeals();
-  }, [meals]);
+  }, []);
 
   let mealsList = [];
 
