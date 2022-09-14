@@ -35,12 +35,17 @@ const url = "https://react-http-8a750-default-rtdb.firebaseio.com/meals.json";
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchMeals = async () => {
       const response = await fetch(url);
-      if (!response.ok) setIsLoaded(false);
-      else {
+
+      if (!response.ok) {
+        console.log("response not ok");
+        throw new Error("Error");
+      } else {
+        console.log("response ok");
         const dataset = await response.json();
 
         const loadedMeals = [];
@@ -50,10 +55,16 @@ const AvailableMeals = () => {
         }
         setMeals(loadedMeals);
         setIsLoaded(true);
+        setHasError(false);
       }
     };
 
-    fetchMeals();
+    fetchMeals()
+      .then()
+      .catch((error) => {
+        setHasError(true);
+        setIsLoaded(false);
+      });
   }, []);
 
   let mealsList = [];
@@ -72,10 +83,15 @@ const AvailableMeals = () => {
 
   return (
     <section className={classes.meals}>
-      <Card>
-        <ul>{mealsList}</ul>
-        {!isLoaded && <p>Loading...</p>}
-      </Card>
+      {isLoaded ? (
+        <Card>
+          <ul>{mealsList}</ul>
+        </Card>
+      ) : (
+        <div className={classes["loading--message"]}>
+          {!hasError ? <p>Loading...</p> : <p> Something went wrong!</p>}
+        </div>
+      )}
     </section>
   );
 };

@@ -11,6 +11,13 @@
   padding: 0;
 }
 
+.loading--message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: lightgray;
+}
+
 @keyframes meals-appear {
   from {
     opacity: 0;
