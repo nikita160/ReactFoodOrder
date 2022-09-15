@@ -3,8 +3,6 @@ import Card from "../UI/Card";
 import MealItem from "./MealItem/MealItem";
 import { useCallback, useEffect, useState } from "react";
 
-const url = "https://react-http-8a750-default-rtdb.firebaseio.com/meals.json";
-
 // const DUMMY_MEALS = [
 //   {
 //     id: "m1",
@@ -32,14 +30,14 @@ const url = "https://react-http-8a750-default-rtdb.firebaseio.com/meals.json";
 //   },
 // ];
 
-const AvailableMeals = () => {
+const AvailableMeals = (props) => {
   const [meals, setMeals] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchMeals = async () => {
-      const response = await fetch(url);
+      const response = await fetch(`${props.url}meals.json`);
 
       if (!response.ok) {
         console.log("response not ok");

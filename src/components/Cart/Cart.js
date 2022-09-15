@@ -7,6 +7,8 @@ import { Checkout, Checkouts } from "./Checkout";
 
 const Cart = (props) => {
   const [isCheckOut, setIsCheckOut] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -26,6 +28,22 @@ const Cart = (props) => {
 
   const cancelHandler = () => {
     setIsCheckOut(false);
+  };
+
+  const submitOrderHandler = async (userData) => {
+    setIsSubmitting(true);
+    const response = await fetch(`${props.url}orders.json`, {
+      method: "POST",
+      body: JSON.stringify({
+        user: userData,
+        orderedItems: cartCtx.items,
+      }),
+    });
+    if (response.ok) {
+      setDidSubmit(true);
+      setIsSubmitting(false);
+      cartCtx.clear();
+    }
   };
 
   const cartItems = (
@@ -57,17 +75,42 @@ const Cart = (props) => {
     </div>
   );
 
-  return (
-    <Modal onClose={props.onClose}>
+  const cartModalContent = (
+    <>
       {cartItems}
       <div className={classes.total}>
         <span>Total amout:</span>
         <span>{totalAmount}</span>
       </div>
       {isCheckOut && (
-        <Checkout onCLose={props.onClose} onCancel={cancelHandler} />
+        <Checkout
+          onCLose={props.onClose}
+          onCancel={cancelHandler}
+          onConfirm={submitOrderHandler}
+        />
       )}
       {!isCheckOut && modalActions}
+    </>
+  );
+
+  const isSubmittingModalContent = <p>Submitting...</p>;
+  const didSubmittedModalContent = (
+    <>
+      <p>Order succesfully submitted</p>
+      <div className={classes.actions}>
+        {" "}
+        <button className={classes.button} onClick={props.onClose}>
+          Close
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {isSubmitting && isSubmittingModalContent}
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {!isSubmitting && didSubmit && didSubmittedModalContent}
     </Modal>
   );
 };

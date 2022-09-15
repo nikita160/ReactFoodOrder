@@ -4,6 +4,8 @@ import Cart from "./components/Cart/Cart";
 import { useState } from "react";
 import CartProvider from "./store/CartProvider";
 
+const url = "https://react-http-8a750-default-rtdb.firebaseio.com/";
+
 function App() {
   const [cartIsShown, setCartIsShown] = useState(false);
 
@@ -17,10 +19,10 @@ function App() {
 
   return (
     <CartProvider>
-      {cartIsShown && <Cart onClose={hideCartHandler} />}
+      {cartIsShown && <Cart onClose={hideCartHandler} url={url} />}
       <Header onShowCart={showCartHandler} />
       <main>
-        <Meals />
+        <Meals url={url} />
       </main>
     </CartProvider>
   );
